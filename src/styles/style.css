@@ -1465,22 +1465,22 @@ html, body {
 }
 .faq-inquiry-btn {
   display: inline-block;
-  padding: 8px 24px;
+  min-width: 152px;
+  padding: 10px 24px;
   border: 1.5px solid var(--primary);
-  border-radius: 8px;
+  border-radius: var(--button-radius);
   color: var(--primary);
   background: #ffffff65;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.8rem;
+  text-align: center;
   text-decoration: none;
-  transition: background 0.2s, color 0.2s;
+  transition: all .25s ease;
 }
 .faq-inquiry-btn:hover {
   background: var(--gradient-pp);
   color: #fff;
 }
-
-
   /* 모바일/태블릿: 가로 스크롤 방지 */
   @media (max-width: 1024px){
     .header-inner { width: 100%; max-width: 1024px;}     /* 970px; 자연스레 100% */
