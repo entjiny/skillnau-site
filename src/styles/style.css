@@ -102,7 +102,7 @@ html, body {
 .header {
   position: fixed;
   top: 0;
-  z-index: 10;
+  z-index: 1;
   width: 100%;
   height: var(--header-height);
   background: #fff;
@@ -198,10 +198,12 @@ html, body {
   color: var(--button-bg);
   border-color: var(--button-border);
 }
-
 /* 헤더가 fixed라 상단 여백 확보 */
 .hero-wrap{
-    padding: calc(var(--header-height) + 32px) 20px 64px;
+  padding-top: calc(var(--header-height) + 64px); /* header 높이 + 추가 여백 */
+  padding-right: 20px;
+  padding-left: 20px;
+  padding-bottom: 64px;
     background: #fff;
   }
   
@@ -1728,7 +1730,10 @@ border-bottom: none;
 
 /*hero section*/
   .hero-wrap{
-    padding: 0 26px;
+    padding-top: calc(var(--header-height) + 30px); /* header 높이 보정 유지 */
+    padding-right: 26px;
+    padding-left: 26px;
+    padding-bottom: 40px;
     background: var(--gradient-pp);
     margin: 0 auto;
     text-align: center;
