@@ -137,3 +137,100 @@ $$('.pf-card[href="#"]').forEach(a => on(a, 'click', e => e.preventDefault()));
   });
 })();
 
+
+// 스크롤 들어오면 부드럽게 카운트업 //
+(() => {
+  const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+
+  // " +250 ", "97%", "72%" 처럼 적힌 기존 텍스트를
+  // [prefix][숫자][suffix]로 분리해주는 파서
+// 교체 버전
+function parseParts(raw) {
+  const s = String(raw).trim();
+  // prefix(비숫자) / sign(+, -) / 정수 / 소수 / suffix(비숫자)
+  const m = s.match(/^(\D*?)([+-]?)(\d{1,3}(?:,\d{3})*|\d+)(?:\.(\d+))?(\D*)$/);
+  if (!m) return { prefix: "", value: 0, decimals: 0, suffix: "" };
+
+  const [, pre, sign, intPart, fracPart, suf] = m;
+  const base = Number((intPart || "0").replaceAll(",", "") + (fracPart ? "." + fracPart : ""));
+  const decimals = (fracPart || "").length;
+
+  // 숫자 값은 부호 반영
+  const value = sign === "-" ? -base : base;
+
+  // 시각적 '+'는 prefix로 붙여서 유지
+  const prefix = (pre || "") + (sign === "+" ? "+" : "");
+
+  return {
+    prefix,
+    value,
+    decimals,
+    suffix: suf || ""
+  };
+}
+
+
+  function formatNumber(value, decimals) {
+    return Number(value.toFixed(decimals))
+      .toLocaleString("ko-KR", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+  }
+
+  function animateCount(el) {
+    // 우선 HTML에 data-target이 있으면 그 값을 우선, 없으면 기존 텍스트를 파싱
+    const hasAttr = el.hasAttribute("data-target");
+    const { prefix, value: parsedVal, decimals } = hasAttr ? 
+      { prefix: el.dataset.prefix || "", value: parseFloat(el.dataset.target || "0"), decimals: parseInt(el.dataset.decimals || "0", 10) } :
+      parseParts(el.textContent);
+
+    const suffix = hasAttr ? (el.dataset.suffix || "") : parseParts(el.textContent).suffix;
+    const duration = parseInt(el.dataset.duration || "1200", 10);
+
+    const target = isFinite(parsedVal) ? parsedVal : 0;
+    const start = performance.now();
+    const startVal = 0;
+
+    // 초기 표시 0으로
+    el.textContent = prefix + formatNumber(0, decimals) + suffix;
+
+    function step(now) {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = easeOutCubic(t);
+      const current = startVal + (target - startVal) * eased;
+      el.textContent = prefix + formatNumber(current, decimals) + suffix;
+      if (t < 1) requestAnimationFrame(step);
+      else el.textContent = prefix + formatNumber(target, decimals) + suffix; // 최종값 고정
+    }
+    requestAnimationFrame(step);
+  }
+
+  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const nums = Array.from(document.querySelectorAll(".stat-num"));
+    if (!nums.length) return;
+
+    if (prefersReduced || !("IntersectionObserver" in window)) {
+      // 모션 최소화 또는 IO 미지원: 즉시 최종값만 표시
+      nums.forEach(el => {
+        const hasAttr = el.hasAttribute("data-target");
+        const parts = hasAttr
+          ? { prefix: el.dataset.prefix || "", value: parseFloat(el.dataset.target || "0"), decimals: parseInt(el.dataset.decimals || "0", 10), suffix: el.dataset.suffix || "" }
+          : parseParts(el.textContent);
+        el.textContent = (parts.prefix || "") + formatNumber(parts.value, parts.decimals || 0) + (parts.suffix || "");
+      });
+      return;
+    }
+
+    const seen = new WeakSet();
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !seen.has(entry.target)) {
+          seen.add(entry.target);
+          animateCount(entry.target);
+        }
+      });
+    }, { threshold: 0.35 });
+
+    nums.forEach(el => io.observe(el));
+  });
+})();
