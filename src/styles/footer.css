@@ -1,0 +1,169 @@
+:root {
+  --primary: #7d58fd;
+  --beige: #FFFCF8;  
+  --laim: #A2FF00;  
+  --light-laim: #b8e46d; 
+  --dark-laim: #81a345; 
+  --light-gray: #707070;
+  --dark-gray: #555;
+  --black: #1b1b1b;
+  --gradient-pp: linear-gradient(90deg, #947BEB 30%, #7D58FD 63%);
+  --gradient-lp: linear-gradient(135deg, #FCF9F5 0%, #A48AFF 100%);
+  --gradient-lll: linear-gradient(135deg, #FDFFEE 0%, #D5FF8C 100%);
+  --gradient-ll: linear-gradient(135deg, #9effb3 40%, #A2FF00 73%);
+  --font: 'Pretendard', sans-serif;
+}
+.container {
+  width: 100%;
+  max-width: 1024px;      /* 970px; 헤더와 히어로가 같은 상한 */
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.footer {
+  background: var(--black);
+  color: var(--beige);
+  padding: 48px 0 24px 0;
+  width: 100%;
+  min-height: 140px;
+}
+
+.footer-container {
+  max-width: 1024px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  padding: 0;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: auto auto;
+  width: 100%;
+  justify-content: space-between;
+  align-items: end;   /* 각 칸의 콘텐츠를 하단 기준으로 */
+  gap: 12px;
+  margin-top: 0;
+}
+
+.footer-left {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.footer-logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  background: none;
+  /* 아래 두 줄은 임시로 여백을 잘라내는 효과 */
+  /* overflow: hidden; */
+  /* aspect-ratio: 5 / 1;  예: 가로5, 세로1 비율로 강제 */
+}
+
+.footer-text {
+  color: #bbb;
+  font-size: 15px;
+}
+
+.footer-info {
+  color: #bbb;
+  font-size: 14px;
+  line-height: 1;
+  margin-top: 4px;
+  white-space: pre-line;
+}
+
+.footer-right {
+  display: flex;
+  flex-direction: column;  /* 세로 배치 */
+  gap: 16px;               /* 위아래 간격 */
+  align-items: flex-end;   /* 오른쪽 정렬 */
+}
+
+.footer-icon img {
+  height: 28px;  /* 조금 균일하게 맞춤 */
+  width: auto;
+  display: block;
+  object-fit: contain;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+
+.footer-icon:hover img {
+  opacity: 1;
+}
+
+
+@media (max-width: 700px) {
+  .footer-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 0 16px;
+  }
+  .footer-left {
+    width: 100%;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .footer-row {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 0;
+  }
+  .footer-logo {
+    height: 30px;
+    margin-right: 0;
+    opacity: 0.8;
+  }
+  .footer-right {
+    gap: 12px;
+  }
+  .footer-info {
+    font-size: 13px;
+    line-height: 1.1;
+    margin-top: 12px;
+    width: 100%;
+  }
+  .footer-text {
+    font-size: 13px;
+    margin-top: 12px;
+  }
+  .hr-line {
+    margin: 12px 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .footer{
+    padding: 50px 0;
+  }
+  .footer-container {
+    padding: 0 30px;
+  }
+  .footer-text {
+    margin-top: 4px;
+  }
+  .hr-line {
+    margin:0
+  }
+  .footer-icon img {
+    height: 26px;
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
+    object-fit: contain;
+    opacity: 0.8;
+  }
+}
