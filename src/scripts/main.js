@@ -246,7 +246,7 @@ function parseParts(raw) {
   // ===== 옵션 =====
   const REPLAY_ON_SCROLL    = true;    // 위로 완전히 벗어나면 되감기 원치 않으면 false
   const SEQUENTIAL_SECTIONS = false;   // true면 섹션 순차 재생, false면 보이는 즉시 재생
-  const SECTION_THRESHOLD   = 0.18;    // 섹션이 이 비율 이상 보이면 play
+  const SECTION_THRESHOLD   = 0.10;   // 섹션이 이 비율 이상 보이면 play
   const DEFAULT_STAGGER_MS  = 200;     // 섹션 내부 자동 스태거 간격
   const SAFETY              = 80;      // 타임아웃 여유
 
@@ -338,7 +338,7 @@ function parseParts(raw) {
     });
   }, {
     threshold: [0, SECTION_THRESHOLD, 1],
-    rootMargin: '0px 0px -6% 0px' // 살짝 늦게 트리거(깜빡임/튀는 진입 줄임)
+    rootMargin: '0px 0px -6% 0px' //살짝 늦게 트리거(깜빡임/튀는 진입 줄임)
   });
 
   sections.forEach(sec => io.observe(sec));
