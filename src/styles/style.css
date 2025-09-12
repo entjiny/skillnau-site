@@ -85,6 +85,61 @@
   background-clip: text;
   color: transparent; /* fallback */
 }
+/*--- 여기 추가함!!!모션 슬라이드 ---*/
+/* ===== Smooth & Slow Reveal ===== */
+:root {
+  --reveal-dur: 900ms;              /* 전체 지속시간 조금 더 여유롭게 */
+  --reveal-ease: cubic-bezier(.16,.84,.44,1);
+  --reveal-distance: 50px;           /* 이동 거리 짧게 */
+}
+
+.reveal {
+  opacity: 0;                        /* 완전히 투명에서 시작 */
+  transform: translate3d(0, var(--reveal-distance), 0);
+  transition:
+    transform var(--reveal-dur) var(--reveal-ease),
+    opacity   var(--reveal-dur) ease;  /* opacity도 transform과 같은 속도로 */
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+/* reveal 공통 (이미 있는 전환 정의 바로 아래 쪽에 두세요) */
+.reveal{
+  transition-delay: var(--delay, 0ms);  /* ✅ 변수값을 실제 delay에 반영 */
+}
+
+/* 스태거 */
+.reveal-group > .reveal { transition-delay: var(--delay, 0ms); }
+
+/* ===== Fade Only ===== */
+/* fade 전용: opacity + 아주 약한 슬라이드로 자연스럽게 */
+.fade-on{
+  opacity: 0.001;                    /* 깜빡임 방지 */
+  transform: translate3d(0, 6px, 0); /* 아주 살짝 */
+  transition:
+    opacity   var(--fade-dur, var(--reveal-dur)) var(--fade-ease, var(--reveal-ease)),
+    transform var(--fade-dur, var(--reveal-dur)) var(--fade-ease, var(--reveal-ease));
+  will-change: opacity, transform;
+  backface-visibility: hidden;
+}
+
+.fade-on.is-visible{
+  opacity: 1;
+  transform: none;
+}
+
+/* 스태거용: delay 변수 사용 */
+.fade-on{ transition-delay: var(--delay, 0ms); }
+
+/* 접근성 */
+@media (prefers-reduced-motion: reduce){
+  .fade-on{ transition:none; opacity:1; transform:none; }
+}
+
 
 /* --- Global reset & layout guard --- */
 html, body {
@@ -202,7 +257,7 @@ html, body {
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
-  transition: all .25s ease;
+  /*transition: all .25s ease;*/
 }
 .header-btn:hover{
   border: 1.5px solid var(--button-border);
@@ -244,7 +299,7 @@ html, body {
   
   /* 제목–서브–버튼 간격 명시 */
   .hero-title { margin: 0 0 20px 0; }
-  .hero-subtext { margin: 0 0 50px 0 !important; color:#FCF9F5; opacity:.95; }
+  .hero-subtext { margin: 0 0 50px 0 !important; color:#FCF9F5; /*opacity:.95;*/ }
 
   /*mobile only text 비활성화*/
   .only-mobile { display: none; }
@@ -265,13 +320,13 @@ html, body {
     text-decoration: none;
     box-shadow: 0 3px 0 var(--button-border);
     cursor: pointer;
-    transition: all 0.4s;
+    /*transition: all 0.4s;*/
   }
   .cta-btn:hover{ 
     background: #FFFCF8; 
     border: 2px solid var(--button-border); 
     color: var(--primary); 
-    transform: translateY(-1px); 
+    /*transform: translateY(-1px);*/
 }
 
   /* 섹션 배경 */
@@ -812,14 +867,14 @@ html, body {
   background:  var(--primary);
   transition: color 0.3s ease, transform 0.3s ease;
   margin: 40px 0 20px 0;
-  transition: all 0.4s;
+  /*transition: all 0.4s;*/
 }
 
 .process-cta .cta-btn:hover {
   background: #FFFCF8; 
   border: 2px solid var(--button-border); 
   color: var(--primary); 
-  transform: translateY(-1px); 
+  /*transform: translateY(-1px);*/
 }
 
 
@@ -2007,14 +2062,15 @@ border-bottom: none;
 /* 섹션 전체 바탕: worry-wrap과 동일하게 화이트 */
 .reviews-wrap{
   padding: 0;
-  background: var(--worry-box-bg);    
+  background: #fff;   
   text-align: center;
 }
 
 
 .reviews-box{
   margin: 0 20px;
-  padding: 86px 0 50px 0;
+  padding: 86px 0 80px 0;
+  background: var(--worry-box-bg);   
   text-align: center;
 }
 

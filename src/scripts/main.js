@@ -234,3 +234,113 @@ function parseParts(raw) {
     nums.forEach(el => io.observe(el));
   });
 })();
+
+// 슬라이드/페이드 모션 (섹션 순차 + 되감기 안정화)
+/* =========================
+   슬라이드/리빌 모션 (reveal 전용)
+   - 섹션이 보이면 즉시 실행
+   - 위로 완전히 벗어나면 되감기(옵션)
+   - 섹션 내부 요소는 자동 스태거(개별 --delay / data-delay가 없을 때만)
+========================= */
+(() => {
+  // ===== 옵션 =====
+  const REPLAY_ON_SCROLL    = true;    // 위로 완전히 벗어나면 되감기 원치 않으면 false
+  const SEQUENTIAL_SECTIONS = false;   // true면 섹션 순차 재생, false면 보이는 즉시 재생
+  const SECTION_THRESHOLD   = 0.18;    // 섹션이 이 비율 이상 보이면 play
+  const DEFAULT_STAGGER_MS  = 200;     // 섹션 내부 자동 스태거 간격
+  const SAFETY              = 80;      // 타임아웃 여유
+
+  // 섹션이 "완전히 화면 위로" 사라졌는지 (되감기 조건)
+  const isFullyAboveViewport = (el) => el.getBoundingClientRect().bottom <= 0;
+
+  // 총 지속시간(ms) 계산: --reveal-dur + --delay(or data-delay)
+  const getTotalMs = (el) => {
+    const cs = getComputedStyle(el);
+    const dur       = parseFloat(cs.getPropertyValue('--reveal-dur')) || 1500;
+    const delayVar  = parseFloat(cs.getPropertyValue('--delay')) || 0;
+    const delayAttr = parseFloat(el.dataset.delay || '0') || 0;
+    const delay     = Math.max(delayVar, delayAttr);
+    return dur + delay + SAFETY;
+  };
+
+  // 섹션 내부 .reveal 항목들 재생
+  const playSection = (section) => {
+    if (section.__played) return;
+
+    const items = [...section.querySelectorAll('.reveal')];
+    if (!items.length) { section.__played = true; return; }
+
+    let idx = 0;
+    items.forEach(el => {
+      // 1) 개별 delay가 없으면 자동 스태거 부여
+      const hasInlineDelay = el.style.getPropertyValue('--delay');
+      if (!hasInlineDelay && !el.dataset.delay) {
+        el.style.setProperty('--delay', `${idx * DEFAULT_STAGGER_MS}ms`);
+      }
+      idx++;
+
+      // 2) transition-delay에 반영 (CSS var 또는 data-delay)
+      const cs = getComputedStyle(el);
+      const varDelay   = cs.getPropertyValue('--delay').trim();
+      const finalDelay = (el.dataset.delay || varDelay || '0ms').trim();
+      el.style.transitionDelay = finalDelay;
+
+      // 3) 레이아웃 확정 후 가시화 (깜빡임 방지)
+      void el.getBoundingClientRect();
+      el.classList.add('is-visible');
+
+      // 4) 애니메이션 종료 후 hover 등 일반 전환 복구 플래그
+      setTimeout(() => el.classList.add('reveal-done'), getTotalMs(el));
+    });
+
+    section.__played = true;
+  };
+
+  // 섹션 되감기(위로 완전히 벗어났을 때만)
+  const resetSection = (section) => {
+    section.querySelectorAll('.reveal').forEach(el => {
+      el.classList.remove('is-visible', 'reveal-done');
+      // el.style.transitionDelay = ''; // 필요 시 주석 해제
+    });
+    section.__played = false;
+  };
+
+  // 대상 섹션 수집
+  const sections = [...document.querySelectorAll('[data-reveal-section]')];
+  if (!sections.length) return;
+
+  let nextIndex  = 0;                 // (순차 모드일 때) 다음 재생할 섹션 인덱스
+  let lastScrollY = window.scrollY;
+
+  const io = new IntersectionObserver((entries) => {
+    const currentY   = window.scrollY;
+    const scrollingUp = currentY < lastScrollY;
+    lastScrollY = currentY;
+
+    entries.forEach(entry => {
+      const section = entry.target;
+      const index   = sections.indexOf(section);
+
+      // 보이자마자 재생 (순차 모드면 index 체크)
+      if (entry.isIntersecting && entry.intersectionRatio >= SECTION_THRESHOLD) {
+        if (!SEQUENTIAL_SECTIONS || index === nextIndex) {
+          playSection(section);
+          nextIndex = Math.min(nextIndex + 1, sections.length - 1);
+        }
+        return;
+      }
+
+      // 되감기: 위로 스크롤 중이고, 섹션이 완전히 화면 위로 나가면 reset
+      if (REPLAY_ON_SCROLL && scrollingUp && section.__played && isFullyAboveViewport(section)) {
+        resetSection(section);
+        nextIndex = Math.min(nextIndex, index); // 포인터 되감기
+      }
+    });
+  }, {
+    threshold: [0, SECTION_THRESHOLD, 1],
+    rootMargin: '0px 0px -6% 0px' // 살짝 늦게 트리거(깜빡임/튀는 진입 줄임)
+  });
+
+  sections.forEach(sec => io.observe(sec));
+})();
+
