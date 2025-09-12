@@ -69,7 +69,7 @@
 
 .footer-info {
   color: #bbb;
-  font-size: 14px;
+  font-size: 0.85rem;
   line-height: 1;
   margin-top: 4px;
   white-space: pre-line;
@@ -105,7 +105,7 @@
 
 .footer-text {
   color: #bbb;
-  font-size: 15px;
+  font-size: 0.85rem;
   text-align: left;        /* ← 좌측 정렬 */
 }
 
