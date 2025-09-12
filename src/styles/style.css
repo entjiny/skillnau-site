@@ -112,33 +112,8 @@
   transition-delay: var(--delay, 0ms);  /* ✅ 변수값을 실제 delay에 반영 */
 }
 
-/* 스태거 */
-.reveal-group > .reveal { transition-delay: var(--delay, 0ms); }
-
-/* ===== Fade Only ===== */
-/* fade 전용: opacity + 아주 약한 슬라이드로 자연스럽게 */
-.fade-on{
-  opacity: 0.001;                    /* 깜빡임 방지 */
-  transform: translate3d(0, 6px, 0); /* 아주 살짝 */
-  transition:
-    opacity   var(--fade-dur, var(--reveal-dur)) var(--fade-ease, var(--reveal-ease)),
-    transform var(--fade-dur, var(--reveal-dur)) var(--fade-ease, var(--reveal-ease));
-  will-change: opacity, transform;
-  backface-visibility: hidden;
-}
-
-.fade-on.is-visible{
-  opacity: 1;
-  transform: none;
-}
-
-/* 스태거용: delay 변수 사용 */
-.fade-on{ transition-delay: var(--delay, 0ms); }
-
-/* 접근성 */
-@media (prefers-reduced-motion: reduce){
-  .fade-on{ transition:none; opacity:1; transform:none; }
-}
+/* 스태거 
+.reveal-group > .reveal { transition-delay: var(--delay, 0ms); }*/
 
 
 /* --- Global reset & layout guard --- */
