@@ -251,8 +251,8 @@ function parseParts(raw) {
   const SAFETY              = 80;     // 타임아웃 여유
 
   // 📱 PC/모바일 분기 (rootMargin 차등)
-  const isMobile = window.matchMedia('(max-width: 768px)').matches;
-  const ROOT_MARGIN = isMobile ? '0px 0px 20% 0px' : '0px 0px -6% 0px';
+  const isMobile = window.matchMedia('(max-width: 700px)').matches;
+  const ROOT_MARGIN = isMobile ? '0px 0px 0% 0px' : '0px 0px -10% 0px'
 
   // 섹션이 "완전히 화면 위로" 사라졌는지 (되감기 조건)
   const isFullyAboveViewport = (el) => el.getBoundingClientRect().bottom <= 0;
