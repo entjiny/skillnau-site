@@ -175,3 +175,34 @@
     opacity: 0.8;
   }
 }
+
+
+/* 푸터 링크 기본 밑줄 제거 */
+.footer a,
+.footer-info a,
+.footer-text a {
+  color: inherit;
+  text-decoration: none !important;
+  border-bottom: 0 !important;
+}
+
+/* hover/focus에서도 밑줄 없음 */
+.footer a:hover,
+.footer a:focus {
+  text-decoration: none !important;
+}
+
+/* 전화/이메일 auto-link (iOS WebKit가 삽입) 대응 */
+.footer a[x-apple-data-detectors],
+.footer a[href^="tel:"],
+.footer a[href^="mailto:"],
+.footer a[href^="sms:"] {
+  color: inherit !important;
+  text-decoration: none !important;
+  border-bottom: 0 !important;
+}
+
+/* Android 일부 브라우저 대비 */
+.footer a[href^="http"] {
+  text-decoration: none !important;
+}
